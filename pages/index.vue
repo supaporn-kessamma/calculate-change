@@ -6,6 +6,7 @@
         @click="
           () => {
             titleName = 'Add Ticket'
+            applyButtonName = 'บันทึกข้อมูล'
             showModal = true
             clear()
           }
@@ -18,7 +19,7 @@
         :show="showModal"
         @close="showModal = false"
         :name-header="titleName"
-        name-button="บันทึกข้อมูล"
+        :name-button="applyButtonName"
         @apply="applyTicket()"
         class="flex justify-between"
       >
@@ -49,7 +50,7 @@
                   :station1="station"
                   :key="idx"
                 >
-                  <td @click="peoplePrice(people, idx)">
+                  <td @click="peoplePrice(idx)">
                     <input
                       type="radio"
                       v-model="station1"
@@ -63,7 +64,7 @@
           </div>
 
           <p class="inline-block">
-            ยอดรวมทั้งหมด <input type="number" v-model="stationPrice" />
+            ยอดรวมทั้งหมด <input type="number" v-model="stationPriceResult" />
           </p>
           <p class="inline-block">
             ยอดเงินที่รับมา <input type="number" v-model="num2" />
@@ -72,8 +73,8 @@
             class="bg-green-600 p-2 text-white rounded-lg"
             @click="
               () => {
-                change(stationPrice, num2)
-                balance(stationPrice, num2)
+                change(stationPriceResult, num2)
+                balance(stationPriceResult, num2)
               }
             "
           >
@@ -94,7 +95,6 @@
                 <th>50 บาท</th>
                 <th>100 บาท</th>
                 <th>500 บาท</th>
-                <th>1000 บาท</th>
                 <th>1000 บาท</th>
               </tr>
             </thead>
@@ -131,7 +131,7 @@
             <tr v-for="(story, idx) in stories" :station1="story" :key="idx">
               <td>{{ story.departure }}</td>
               <td>{{ story.station }}</td>
-              <td>{{ story.stationPrice }}</td>
+              <td>{{ story.stationPriceResult }}</td>
               <td>{{ story.num2 }}</td>
               <td>{{ story.dateTime }}</td>
               <td>
@@ -185,6 +185,7 @@ export default {
     return {
       showModal: false,
       titleName: '',
+      applyButtonName: '',
 
       result: 0,
       amount: 0,
@@ -202,6 +203,7 @@ export default {
       oneHundred: 0,
       fiveHundred: 0,
       oneThousand: 0,
+      stationPriceResult: 0,
       dateToDay: new Date().toISOString().slice(0, 10),
       stations: [
         {
@@ -247,7 +249,7 @@ export default {
       story: {
         departure: '',
         station: '',
-        stationPrice: 0,
+        stationPriceResult: 0,
         num2: 0,
         dateTime: '',
         one: 0,
@@ -262,11 +264,11 @@ export default {
       },
     }
   },
-  // watch: {
-  //   people(val) {
-  //     this.peoplePrice()
-  //   },
-  // },
+  watch: {
+    people(val) {
+      this.peopleChange()
+    },
+  },
   methods: {
     change(num1, num2) {
       this.result = num2 - num1
@@ -307,9 +309,13 @@ export default {
         this.one += 1
       }
     },
-    peoplePrice(people, idx) {
+    peoplePrice(idx) {
       this.stationPrice = this.stations[idx].price
-      this.stationPrice *= people
+      this.peopleChange()
+      // this.stationPrice *= people
+    },
+    peopleChange() {
+      this.stationPriceResult = this.stationPrice * this.people
     },
     balance(num1, num2) {
       this.result = num2 - num1
@@ -320,7 +326,7 @@ export default {
         this.stories.push({
           departure: this.value,
           station: this.station1,
-          stationPrice: this.stationPrice,
+          stationPriceResult: this.stationPriceResult,
           num2: this.num2,
           dateTime: this.dateToDay,
           one: this.one,
@@ -358,6 +364,7 @@ export default {
       this.story.oneThousand = this.stories[idx].oneThousand
 
       this.titleName = 'Show Story'
+      this.applyButtonName = ''
       this.nowShow = idx
       this.showModal = true
     },
