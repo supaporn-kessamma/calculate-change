@@ -6,8 +6,8 @@
         @click="
           () => {
             titleName = 'Add Ticket'
-            applyButtonName = 'บันทึกข้อมูล'
             showModal = true
+            showButton = true
             clear()
           }
         "
@@ -19,7 +19,8 @@
         :show="showModal"
         @close="showModal = false"
         :name-header="titleName"
-        :name-button="applyButtonName"
+        name-button="บันทึกข้อมูล"
+        :showButton="showButton"
         @apply="applyTicket()"
         class="flex justify-between"
       >
@@ -185,7 +186,7 @@ export default {
     return {
       showModal: false,
       titleName: '',
-      applyButtonName: '',
+      showButton: '',
 
       result: 0,
       amount: 0,
@@ -364,9 +365,9 @@ export default {
       this.story.oneThousand = this.stories[idx].oneThousand
 
       this.titleName = 'Show Story'
-      this.applyButtonName = ''
       this.nowShow = idx
       this.showModal = true
+      this.showButton = false
     },
     clear() {
       this.story = {}
